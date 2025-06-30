@@ -3,7 +3,7 @@ include '../includes/auth.php';
 
 
 if ($_SESSION['rol'] !== 'directora') {
-    header("Location: ../views/login.php");
+    header("Location: ../../../views/login.php");
     exit;
 }
 ?>
