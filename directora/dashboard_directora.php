@@ -29,6 +29,16 @@ if ($_SESSION['rol'] !== 'directora') {
                 </div>
             </div>
         </div>
+        <!-- Tarjeta: Gestión de Carreras -->
+        <div class="col-md-4">
+            <div class="card shadow rounded-4">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Gestión de Carreras</h5>
+                    <p class="card-text">Administrar las carreras disponibles en la institución.</p>
+                    <a href="carreras.php" class="btn btn-primary">Ir al módulo</a>
+                </div>
+            </div>
+        </div>
 
         <!-- Tarjeta: Gestión de Docentes -->
         <div class="col-md-4">
