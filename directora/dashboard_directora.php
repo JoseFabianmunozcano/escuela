@@ -36,7 +36,7 @@ if ($_SESSION['rol'] !== 'directora') {
                 <div class="card-body text-center">
                     <h5 class="card-title">Gestión de Docentes</h5>
                     <p class="card-text">Administrar datos de los docentes asignados.</p>
-                    <a href="docente.php" class="btn btn-primary">Ir al módulo</a>
+                    <a href="docentes.php" class="btn btn-primary">Ir al módulo</a>
                 </div>
             </div>
         </div>
@@ -47,7 +47,7 @@ if ($_SESSION['rol'] !== 'directora') {
                 <div class="card-body text-center">
                     <h5 class="card-title">Gestión de Cursos</h5>
                     <p class="card-text">Crear y organizar cursos escolares.</p>
-                    <a href="curso.php" class="btn btn-primary">Ir al módulo</a>
+                    <a href="cursos.php" class="btn btn-primary">Ir al módulo</a>
                 </div>
             </div>
         </div>
