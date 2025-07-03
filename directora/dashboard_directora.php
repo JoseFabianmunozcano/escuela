@@ -67,7 +67,7 @@ if ($_SESSION['rol'] !== 'directora') {
         </a>
         <div class="d-flex align-items-center">
             <span class="navbar-text me-3">
-                Bienvenida, <strong><?= htmlspecialchars($_SESSION['usuario']); ?></strong> (Rol: <?= htmlspecialchars($_SESSION['rol']); ?>)
+               <strong>Bienvenida <?= htmlspecialchars($_SESSION['rol']); ?>, <?= htmlspecialchars($_SESSION['usuario']); ?></strong>
             </span>
             <a href="../views/logout.php" class="btn btn-outline-danger d-flex align-items-center">
                 <i class="bi bi-box-arrow-right me-2"></i>Cerrar sesión
