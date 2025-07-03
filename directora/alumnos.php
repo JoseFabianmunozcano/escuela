@@ -2,7 +2,6 @@
 global $conn;
 include '../includes/auth.php';
 
-
 if ($_SESSION['rol'] !== 'directora') {
     header("Location: ../views/login.php");
     exit;
@@ -18,9 +17,6 @@ function calcularEdad($fecha_nac) {
 
     try {
         $nac = DateTime::createFromFormat('Y-m-d', $fecha_nac);
-        if (!$nac) {
-            $nac = DateTime::createFromFormat('d/m/Y', $fecha_nac);
-        }
         if (!$nac) return 'N/A';
 
         $hoy = new DateTime();
@@ -41,7 +37,7 @@ if (isset($_GET['editar'])) {
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['agregar'])) {
     $nombre = $_POST['nombre'];
-    $fecha_nac = !empty($_POST['fecha_nac']) ? date('d/m/Y', strtotime($_POST['fecha_nac'])) : null;
+    $fecha_nac = !empty($_POST['fecha_nac']) ? $_POST['fecha_nac'] : null;
     $sexo = $_POST['sexo'];
     $correo = $_POST['correo'];
     $telefono = $_POST['telefono'];
@@ -50,7 +46,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['agregar'])) {
     $estado = $_POST['estado'];
 
     $sql = "INSERT INTO alumnos (id_alumno, nombre, fecha_nacimiento, sexo, correo, telefono, direccion, id_carrera, estado, fecha_inscripcion)
-            VALUES (alumnos_seq.NEXTVAL, :nombre, TO_DATE(:fecha_nac, 'DD/MM/YYYY'), :sexo, :correo, :telefono, :direccion, :id_carrera, :estado, SYSDATE)";
+            VALUES (alumnos_seq.NEXTVAL, :nombre, TO_DATE(:fecha_nac, 'YYYY-MM-DD'), :sexo, :correo, :telefono, :direccion, :id_carrera, :estado, SYSDATE)";
     $stmt = $conn->prepare($sql);
     $stmt->bindParam(':nombre', $nombre);
     $stmt->bindParam(':fecha_nac', $fecha_nac);
@@ -66,7 +62,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['agregar'])) {
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['actualizar'])) {
     $id_alumno = $_POST['id_alumno'];
     $nombre = $_POST['nombre'];
-    $fecha_nac = !empty($_POST['fecha_nac']) ? date('d/m/Y', strtotime($_POST['fecha_nac'])) : null;
+    $fecha_nac = !empty($_POST['fecha_nac']) ? $_POST['fecha_nac'] : null;
     $sexo = $_POST['sexo'];
     $correo = $_POST['correo'];
     $telefono = $_POST['telefono'];
@@ -74,7 +70,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['actualizar'])) {
     $id_carrera = $_POST['id_carrera'];
     $estado = $_POST['estado'];
 
-    $sql = "UPDATE alumnos SET nombre = :nombre, fecha_nacimiento = TO_DATE(:fecha_nac, 'DD/MM/YYYY'), sexo = :sexo, correo = :correo, telefono = :telefono,
+    $sql = "UPDATE alumnos SET nombre = :nombre, fecha_nacimiento = TO_DATE(:fecha_nac, 'YYYY-MM-DD'), sexo = :sexo, correo = :correo, telefono = :telefono,
             direccion = :direccion, id_carrera = :id_carrera, estado = :estado WHERE id_alumno = :id";
     $stmt = $conn->prepare($sql);
     $stmt->bindParam(':nombre', $nombre);
@@ -102,7 +98,7 @@ if (isset($_GET['eliminar'])) {
     exit;
 }
 
-$sql = "SELECT a.*, c.nombre AS carrera FROM alumnos a
+$sql = "SELECT a.*, TO_CHAR(a.fecha_nacimiento, 'DD/MM/YYYY') AS fecha_nacimiento_fmt, c.nombre AS carrera FROM alumnos a
         JOIN carreras c ON a.id_carrera = c.id_carrera";
 $stmt = $conn->prepare($sql);
 $stmt->execute();
@@ -126,7 +122,10 @@ $carreras = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <form method="POST" class="row g-3 mt-3">
         <input type="hidden" name="id_alumno" value="<?= $datos_editar['ID_ALUMNO'] ?? '' ?>">
         <div class="col-md-3"><input type="text" name="nombre" class="form-control" placeholder="Nombre" required value="<?= $datos_editar['NOMBRE'] ?? '' ?>"></div>
-        <div class="col-md-2"><input type="date" name="fecha_nac" class="form-control" required value="<?= $datos_editar['FECHA_NACIMIENTO'] ?? '' ?>"></div>
+        <div class="col-md-2">
+            <input type="date" name="fecha_nac" class="form-control" required
+                   value="<?= isset($datos_editar['FECHA_NACIMIENTO']) ? date('Y-m-d', strtotime($datos_editar['FECHA_NACIMIENTO'])) : '' ?>">
+        </div>
         <div class="col-md-1">
             <select name="sexo" class="form-select" required>
                 <option value="">Sexo</option>
@@ -182,7 +181,7 @@ $carreras = $stmt->fetchAll(PDO::FETCH_ASSOC);
             <tr>
                 <td><?= $a['ID_ALUMNO'] ?></td>
                 <td><?= $a['NOMBRE'] ?></td>
-                <td><?= !empty($a['FECHA_NACIMIENTO']) ? date('d/m/Y', strtotime($a['FECHA_NACIMIENTO'])) : 'N/A' ?></td>
+                <td><?= $a['FECHA_NACIMIENTO_FMT'] ?? 'N/A' ?></td>
                 <td><?= calcularEdad($a['FECHA_NACIMIENTO']) ?> años</td>
                 <td><?= $a['SEXO'] ?></td>
                 <td><?= $a['CORREO'] ?></td>
