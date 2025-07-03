@@ -18,7 +18,7 @@ if ($_SESSION['rol'] !== 'directora') {
 
     <style>
         body {
-            background-color: #f8f9fa; /* Un fondo gris claro para dar contraste */
+            background-color: rgba(105, 104, 104, 0.3); /* Un fondo gris claro para dar contraste */
         }
         .navbar {
             background-color: #ffffff;

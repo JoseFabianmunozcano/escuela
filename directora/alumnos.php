@@ -126,7 +126,7 @@ $button_class = $id_editar ? 'btn-primary' : 'btn-success';
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <style>
-        body { background-color: #f8f9fa; }
+        body { background-color: rgba(105, 104, 104, 0.3); }
         .card { box-shadow: 0 0.5rem 1rem rgba(0,0,0,.1); border: none; }
         .table-hover tbody tr:hover { background-color: #f1f1f1; }
         .btn-icon { padding: 0.375rem 0.75rem; }
