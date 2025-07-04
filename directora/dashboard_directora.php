@@ -3,7 +3,7 @@ include '../includes/auth.php';
 
 // Redirige si el rol no es 'directora'
 if ($_SESSION['rol'] !== 'directora') {
-    header("Location: ../../views/login.php"); // Corregida la ruta si es necesario. Ajusta según tu estructura de carpetas
+    header("Location: ../../views/login.php"); // Asegúrate de que esta ruta sea correcta para tu estructura de carpetas
     exit;
 }
 ?>
@@ -18,7 +18,7 @@ if ($_SESSION['rol'] !== 'directora') {
 
     <style>
         body {
-            background-color: rgba(173, 172, 172, 0.3); /* Fondo gris claro consistente */
+            background-color: #f8f9fa; /* Fondo gris claro consistente */
             font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; /* Fuente consistente */
         }
         .navbar {
@@ -162,6 +162,73 @@ if ($_SESSION['rol'] !== 'directora') {
                 </div>
             </div>
         </div>
+
+        <div class="col-lg-3 col-md-6 col-sm-10">
+            <div class="card card-custom">
+                <div class="card-body">
+                    <i class="bi bi-file-earmark-person-fill card-icon"></i>
+                    <h5 class="card-title">Gestión de Inscripciones</h5>
+                    <p class="card-text">Administra las inscripciones de alumnos a cursos.</p>
+                    <a href="inscripciones.php" class="btn btn-primary btn-custom">Ir al módulo <i class="bi bi-arrow-right ms-2"></i></a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-3 col-md-6 col-sm-10">
+            <div class="card card-custom">
+                <div class="card-body">
+                    <i class="bi bi-person-lines-fill card-icon"></i>
+                    <h5 class="card-title">Asignación Docentes</h5>
+                    <p class="card-text">Asigna docentes a cursos y grupos.</p>
+                    <a href="asignacion_docentes.php" class="btn btn-primary btn-custom">Ir al módulo <i class="bi bi-arrow-right ms-2"></i></a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-3 col-md-6 col-sm-10">
+            <div class="card card-custom">
+                <div class="card-body">
+                    <i class="bi bi-journal-check card-icon"></i>
+                    <h5 class="card-title">Gestión de Calificaciones</h5>
+                    <p class="card-text">Monitorea y valida las calificaciones de los cursos.</p>
+                    <a href="calificaciones.php" class="btn btn-primary btn-custom">Ir al módulo <i class="bi bi-arrow-right ms-2"></i></a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-3 col-md-6 col-sm-10">
+            <div class="card card-custom">
+                <div class="card-body">
+                    <i class="bi bi-calendar-check card-icon"></i>
+                    <h5 class="card-title">Períodos Académicos</h5>
+                    <p class="card-text">Define y gestiona los ciclos escolares.</p>
+                    <a href="periodos_academicos.php" class="btn btn-primary btn-custom">Ir al módulo <i class="bi bi-arrow-right ms-2"></i></a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-3 col-md-6 col-sm-10">
+            <div class="card card-custom">
+                <div class="card-body">
+                    <i class="bi bi-bar-chart-fill card-icon"></i>
+                    <h5 class="card-title">Reportes y Estadísticas</h5>
+                    <p class="card-text">Genera informes y estadísticas del sistema.</p>
+                    <a href="reportes_estadisticas.php" class="btn btn-primary btn-custom">Ir al módulo <i class="bi bi-arrow-right ms-2"></i></a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-3 col-md-6 col-sm-10">
+            <div class="card card-custom">
+                <div class="card-body">
+                    <i class="bi bi-megaphone-fill card-icon"></i>
+                    <h5 class="card-title">Comunicados y Avisos</h5>
+                    <p class="card-text">Envía comunicados a alumnos y docentes.</p>
+                    <a href="comunicados.php" class="btn btn-primary btn-custom">Ir al módulo <i class="bi bi-arrow-right ms-2"></i></a>
+                </div>
+            </div>
+        </div>
+
     </div>
 </div>
 
