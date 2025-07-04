@@ -62,8 +62,8 @@ if ($_SESSION['rol'] !== 'directora') {
 <nav class="navbar navbar-expand-lg mb-5">
     <div class="container-fluid">
         <a class="navbar-brand" href="#">
-            <i class="bi bi-speedometer2"></i>
-            Panel de Control
+            <i class="bi bi-briefcase"></i>
+            Panel General
         </a>
         <div class="d-flex align-items-center">
             <span class="navbar-text me-3">
