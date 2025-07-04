@@ -2,7 +2,7 @@
 global $conn;
 include '../includes/auth.php';
 
-// --- INICIO DE TU LÓGICA PHP (sin cambios significativos en la lógica, solo manejo de errores y htmlspecialchars) ---
+
 if ($_SESSION['rol'] !== 'directora') {
     header("Location: ../views/login.php");
     exit;
