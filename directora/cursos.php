@@ -121,7 +121,7 @@ $carreras = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <body>
 <nav class="navbar navbar-expand-lg navbar-light bg-light py-3 shadow-sm">
     <div class="container">
-        <a class="navbar-brand fw-bold text-primary" href="#">
+        <a class="navbar-brand fw-bold text-primary" href="dashboard_directora.php">
             <i class="fas fa-book-open me-2"></i> Gestión de Cursos
         </a>
         <div class="collapse navbar-collapse justify-content-end">
