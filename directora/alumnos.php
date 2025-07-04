@@ -154,7 +154,7 @@ $button_class = $id_editar ? 'btn-primary' : 'btn-success';
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <style>
         body {
-            background-color: #f8f9fa; /* Light grey background */
+            background-color: rgba(173, 172, 172, 0.3); /* Light grey background */
             font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
         }
         .navbar {
