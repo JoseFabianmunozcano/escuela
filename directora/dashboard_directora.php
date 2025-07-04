@@ -82,7 +82,7 @@ if ($_SESSION['rol'] !== 'directora') {
             <div class="card card-custom text-center">
                 <div class="card-body p-4">
                     <div>
-                        <i class="bi bi-people-fill card-icon mb-3 d-block"></i>
+                        <i class="bi bi-backpack2-fill card-icon mb-3 d-block"></i>
                         <h5 class="card-title">Gestión de Alumnos</h5>
                         <p class="card-text text-muted small">Registra, edita o elimina información de alumnos.</p>
                     </div>
@@ -129,8 +129,21 @@ if ($_SESSION['rol'] !== 'directora') {
                 </div>
             </div>
         </div>
+        <div class="col-lg-3 col-md-6">
+            <div class="card card-custom text-center">
+                <div class="card-body p-4">
+                    <div>
+                        <i class="bi bi-people-fill card-icon mb-3 d-block"></i>
+                        <h5 class="card-title">Gestión de Usuarios</h5>
+                        <p class="card-text text-muted small">Administra los usuarios del sistema.</p>
+                    </div>
+                    <a href="usuarios.php" class="btn btn-primary btn-custom mt-3">Ir al módulo</a>
+                </div>
+            </div>
+        </div> 
     </div>
 </div>
+
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
