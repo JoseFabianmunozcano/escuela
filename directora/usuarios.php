@@ -263,6 +263,7 @@ $button_class = $id_editar ? 'btn-primary' : 'btn-success';
                             <option value="directora" <?= (isset($datos_editar['ROL']) && $datos_editar['ROL'] == 'directora') ? 'selected' : '' ?>>Directora</option>
                             <option value="coordinador" <?= (isset($datos_editar['ROL']) && $datos_editar['ROL'] == 'coordinador') ? 'selected' : '' ?>>Coordinador</option>
                             <option value="cobranza" <?= (isset($datos_editar['ROL']) && $datos_editar['ROL'] == 'cobranza') ? 'selected' : '' ?>>Cobranza</option>
+                            <option value="docente" <?= (isset($datos_editar['ROL']) && $datos_editar['ROL'] == 'docente') ? 'selected' : '' ?>>Docente</option>
                         </select>
                     </div>
                 </div>

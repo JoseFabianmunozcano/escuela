@@ -31,6 +31,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 case 'cobranza':
                     header("Location: cobranza/dashboard_cobranza.php");
                     break;
+                case 'docente':
+                    header("Location: docente/dashboard_docente.php");
+                    break;
                 default:
                     echo "<script>alert('Rol desconocido'); window.location='views/login.php';</script>";
                     exit;
@@ -47,7 +50,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $rol = $_POST['rol'];
 
         // Validar rol permitido
-        $roles_permitidos = ['directora', 'coordinador', 'cobranza'];
+        $roles_permitidos = ['directora', 'coordinador', 'cobranza', 'docente'];
         if (!in_array($rol, $roles_permitidos)) {
             echo "<script>alert('Rol inválido'); window.history.back();</script>";
             exit;
