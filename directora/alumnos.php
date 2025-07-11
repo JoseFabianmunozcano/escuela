@@ -1,22 +1,31 @@
 <?php
+// Asegúrate de que auth.php incluya session_start() o lo llame aquí si no lo hace.
 global $conn;
-include '../includes/auth.php';
+include '../includes/auth.php'; // auth.php debería iniciar la sesión y manejar la autenticación
 
 
 if ($_SESSION['rol'] !== 'directora') {
-    header("Location: ../views/login.php");
+    header("Location: ../views/login.php"); // Ruta corregida si es necesario
     exit;
 }
 
-include '../includes/conexion.php';
+include '../includes/conexion.php'; // Aquí se espera que $conn se defina
 
 $id_editar = null;
 $datos_editar = null;
 
+// Inicialización de variables para mensajes de éxito y error
+$mensaje_exito = '';
+$mensaje_error = '';
+
+/**
+ * Calcula la edad a partir de una fecha de nacimiento.
+ * @param string $fecha_nac_str Fecha de nacimiento en formato string (ej. 'YYYY-MM-DD').
+ * @return int|string La edad en años o 'N/A' si hay un error.
+ */
 function calcularEdad($fecha_nac_str) {
     if (empty($fecha_nac_str)) return 'N/A';
     try {
-        // Convert the string to a DateTime object directly for calculation
         $nac = new DateTime($fecha_nac_str);
         $hoy = new DateTime();
         return $hoy->diff($nac)->y;
@@ -25,20 +34,26 @@ function calcularEdad($fecha_nac_str) {
     }
 }
 
-
+// Lógica para cargar datos del alumno para edición
 if (isset($_GET['editar'])) {
     $id_editar = $_GET['editar'];
-    $sql = "SELECT * FROM alumnos WHERE id_alumno = :id";
+    // Nombres de columna en mayúsculas para Oracle si ATTR_CASE es UPPER
+    $sql = "SELECT ID_ALUMNO, NOMBRE, TO_CHAR(FECHA_NACIMIENTO, 'YYYY-MM-DD') AS FECHA_NACIMIENTO_ISO, SEXO, CORREO, TELEFONO, DIRECCION, ID_CARRERA, ESTADO FROM ALUMNOS WHERE ID_ALUMNO = :id";
     $stmt = $conn->prepare($sql);
-    $stmt->bindParam(':id', $id_editar);
+    $stmt->bindParam(':id', $id_editar, PDO::PARAM_INT); // Especificar tipo INT para seguridad
     try {
         $stmt->execute();
         $datos_editar = $stmt->fetch(PDO::FETCH_ASSOC);
+        if (!$datos_editar) {
+            $mensaje_error = "Alumno no encontrado para edición.";
+            $id_editar = null; // Resetear para que el formulario actúe como "agregar"
+        }
     } catch (PDOException $e) {
-        echo "<div class='alert alert-danger'>Error al cargar datos para edición: " . htmlspecialchars($e->getMessage()) . "</div>";
+        $mensaje_error = "Error al cargar datos para edición: " . htmlspecialchars($e->getMessage());
     }
 }
 
+// Lógica para agregar un nuevo alumno
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['agregar'])) {
     $nombre = $_POST['nombre'];
     $fecha_nac = !empty($_POST['fecha_nac']) ? $_POST['fecha_nac'] : null;
@@ -49,8 +64,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['agregar'])) {
     $id_carrera = $_POST['id_carrera'];
     $estado = $_POST['estado'];
 
-    $sql = "INSERT INTO alumnos (id_alumno, nombre, fecha_nacimiento, sexo, correo, telefono, direccion, id_carrera, estado, fecha_inscripcion)
-            VALUES (alumnos_seq.NEXTVAL, :nombre, TO_DATE(:fecha_nac, 'YYYY-MM-DD'), :sexo, :correo, :telefono, :direccion, :id_carrera, :estado, SYSDATE)";
+    // Asegúrate de que ALUMNOS_SEQ sea el nombre correcto de tu secuencia y FECHA_INSCRIPCION el nombre de la columna
+    $sql = "INSERT INTO ALUMNOS (ID_ALUMNO, NOMBRE, FECHA_NACIMIENTO, SEXO, CORREO, TELEFONO, DIRECCION, ID_CARRERA, ESTADO, FECHA_INSCRIPCION)
+            VALUES (ALUMNOS_SEQ.NEXTVAL, :nombre, TO_DATE(:fecha_nac, 'YYYY-MM-DD'), :sexo, :correo, :telefono, :direccion, :id_carrera, :estado, SYSDATE)";
     $stmt = $conn->prepare($sql);
     $stmt->bindParam(':nombre', $nombre);
     $stmt->bindParam(':fecha_nac', $fecha_nac);
@@ -58,17 +74,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['agregar'])) {
     $stmt->bindParam(':correo', $correo);
     $stmt->bindParam(':telefono', $telefono);
     $stmt->bindParam(':direccion', $direccion);
-    $stmt->bindParam(':id_carrera', $id_carrera);
+    $stmt->bindParam(':id_carrera', $id_carrera, PDO::PARAM_INT); // Especificar tipo INT
     $stmt->bindParam(':estado', $estado);
     try {
         $stmt->execute();
-        header("Location: alumnos.php");
+        // Redirigir para mostrar mensaje de éxito y limpiar el formulario
+        header("Location: alumnos.php?msg=added");
         exit;
     } catch (PDOException $e) {
-        echo "<div class='alert alert-danger'>Error al agregar alumno: " . htmlspecialchars($e->getMessage()) . "</div>";
+        $mensaje_error = "Error al agregar alumno: " . htmlspecialchars($e->getMessage());
     }
 }
 
+// Lógica para actualizar un alumno existente
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['actualizar'])) {
     $id_alumno = $_POST['id_alumno'];
     $nombre = $_POST['nombre'];
@@ -80,8 +98,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['actualizar'])) {
     $id_carrera = $_POST['id_carrera'];
     $estado = $_POST['estado'];
 
-    $sql = "UPDATE alumnos SET nombre = :nombre, fecha_nacimiento = TO_DATE(:fecha_nac, 'YYYY-MM-DD'), sexo = :sexo, correo = :correo, telefono = :telefono,
-            direccion = :direccion, id_carrera = :id_carrera, estado = :estado WHERE id_alumno = :id";
+    $sql = "UPDATE ALUMNOS SET NOMBRE = :nombre, FECHA_NACIMIENTO = TO_DATE(:fecha_nac, 'YYYY-MM-DD'), SEXO = :sexo, CORREO = :correo, TELEFONO = :telefono,
+            DIRECCION = :direccion, ID_CARRERA = :id_carrera, ESTADO = :estado WHERE ID_ALUMNO = :id";
     $stmt = $conn->prepare($sql);
     $stmt->bindParam(':nombre', $nombre);
     $stmt->bindParam(':fecha_nac', $fecha_nac);
@@ -89,55 +107,87 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['actualizar'])) {
     $stmt->bindParam(':correo', $correo);
     $stmt->bindParam(':telefono', $telefono);
     $stmt->bindParam(':direccion', $direccion);
-    $stmt->bindParam(':id_carrera', $id_carrera);
+    $stmt->bindParam(':id_carrera', $id_carrera, PDO::PARAM_INT);
     $stmt->bindParam(':estado', $estado);
-    $stmt->bindParam(':id', $id_alumno);
+    $stmt->bindParam(':id', $id_alumno, PDO::PARAM_INT);
     try {
         $stmt->execute();
-        header("Location: alumnos.php");
+        // Redirigir para mostrar mensaje de éxito
+        header("Location: alumnos.php?msg=updated");
         exit;
     } catch (PDOException $e) {
-        echo "<div class='alert alert-danger'>Error al actualizar alumno: " . htmlspecialchars($e->getMessage()) . "</div>";
+        $mensaje_error = "Error al actualizar alumno: " . htmlspecialchars($e->getMessage());
     }
 }
 
+// Lógica para eliminar un alumno
 if (isset($_GET['eliminar'])) {
     $id_eliminar = $_GET['eliminar'];
-    $sql = "DELETE FROM alumnos WHERE id_alumno = :id";
+    $sql = "DELETE FROM ALUMNOS WHERE ID_ALUMNO = :id";
     $stmt = $conn->prepare($sql);
-    $stmt->bindParam(':id', $id_eliminar);
+    $stmt->bindParam(':id', $id_eliminar, PDO::PARAM_INT);
     try {
         $stmt->execute();
-        header("Location: alumnos.php");
+        // Redirigir para mostrar mensaje de éxito
+        header("Location: alumnos.php?msg=deleted");
         exit;
     } catch (PDOException $e) {
-        echo "<div class='alert alert-danger'>Error al eliminar alumno: " . htmlspecialchars($e->getMessage()) . "</div>";
+        $mensaje_error = "Error al eliminar alumno: " . htmlspecialchars($e->getMessage());
     }
 }
 
-$sql = "SELECT a.*, TO_CHAR(a.fecha_nacimiento, 'YYYY-MM-DD') AS fecha_nacimiento_iso, c.nombre AS carrera FROM alumnos a
-        JOIN carreras c ON a.id_carrera = c.id_carrera ORDER BY a.id_alumno ASC";
-$stmt = $conn->prepare($sql);
+// Manejo de mensajes de éxito desde la URL (después de redirecciones)
+if (isset($_GET['msg'])) {
+    if ($_GET['msg'] === 'updated') {
+        $mensaje_exito = "Alumno actualizado con éxito.";
+    } elseif ($_GET['msg'] === 'deleted') {
+        $mensaje_exito = "Alumno eliminado con éxito.";
+    } elseif ($_GET['msg'] === 'added') {
+        $mensaje_exito = "Alumno agregado con éxito.";
+    }
+}
+
+// Consulta para obtener la lista de alumnos
+$alumnos = []; // Inicializar para evitar errores si la consulta falla
 try {
+    // CAMBIO CLAVE: Usar LEFT JOIN para incluir alumnos que puedan no tener una carrera coincidente
+    // Asegúrate de que los nombres de las tablas y columnas son correctos en Oracle (ej. ALUMNOS, ID_ALUMNO, FECHA_NACIMIENTO, CARRERAS, ID_CARRERA, NOMBRE)
+    $sql = "SELECT A.ID_ALUMNO, A.NOMBRE, TO_CHAR(A.FECHA_NACIMIENTO, 'YYYY-MM-DD') AS FECHA_NACIMIENTO_ISO, A.SEXO, A.CORREO, A.TELEFONO, A.DIRECCION, A.ESTADO, C.NOMBRE AS CARRERA
+            FROM ALUMNOS A
+            LEFT JOIN CARRERAS C ON A.ID_CARRERA = C.ID_CARRERA
+            ORDER BY A.ID_ALUMNO ASC";
+    $stmt = $conn->prepare($sql);
     $stmt->execute();
     $alumnos = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    // Opcional: Para depuración, puedes descomentar estas líneas temporalmente
+    // echo "<div class='alert alert-info'>Número de alumnos encontrados: " . count($alumnos) . "</div>";
+    // echo "<pre>"; print_r($alumnos); echo "</pre>";
+
 } catch (PDOException $e) {
-    echo "<div class='alert alert-danger'>Error al cargar listado de alumnos: " . htmlspecialchars($e->getMessage()) . "</div>";
-    $alumnos = []; // Ensure $alumnos is an empty array to prevent issues in foreach
+    // Si la carga de alumnos falla, asegúrate de que el mensaje de error sea visible
+    $mensaje_error .= ($mensaje_error ? "<br>" : "") . "Error al cargar listado de alumnos: " . htmlspecialchars($e->getMessage());
+    error_log("Error al cargar alumnos en alumnos.php: " . $e->getMessage()); // Registrar en el log de errores
+    $alumnos = []; // Asegurar que $alumnos sea un array vacío para evitar problemas en el bucle foreach
 }
 
 
-$sql_carreras = "SELECT id_carrera, nombre FROM carreras ORDER BY nombre";
-$stmt = $conn->prepare($sql_carreras);
+// Consulta para obtener la lista de carreras (para el dropdown del formulario)
+$carreras = []; // Inicializar para evitar errores si la consulta falla
 try {
+    // Nombres de columna en mayúsculas
+    $sql_carreras = "SELECT ID_CARRERA, NOMBRE FROM CARRERAS ORDER BY NOMBRE";
+    $stmt = $conn->prepare($sql_carreras);
     $stmt->execute();
     $carreras = $stmt->fetchAll(PDO::FETCH_ASSOC);
 } catch (PDOException $e) {
-    echo "<div class='alert alert-danger'>Error al cargar lista de carreras: " . htmlspecialchars($e->getMessage()) . "</div>";
-    $carreras = []; // Ensure $carreras is an empty array
+    // Si la carga de carreras falla, añadir al mensaje de error existente
+    $mensaje_error .= ($mensaje_error ? "<br>" : "") . "Error al cargar lista de carreras: " . htmlspecialchars($e->getMessage());
+    error_log("Error al cargar carreras en alumnos.php: " . $e->getMessage()); // Registrar en el log de errores
+    $carreras = []; // Asegurar que $carreras sea un array vacío
 }
 
-// Variables para el diseño dinámico
+// Variables para el diseño dinámico del formulario
 $form_title = $id_editar ? 'Editar Información del Alumno' : 'Registrar Nuevo Alumno';
 $button_text = $id_editar ? 'Actualizar Alumno' : 'Registrar Alumno';
 $button_class = $id_editar ? 'btn-primary' : 'btn-success';
@@ -230,6 +280,20 @@ $button_class = $id_editar ? 'btn-primary' : 'btn-success';
 
 <div class="container mt-5">
     <h1 class="mb-4 text-center text-primary">Administración de Alumnos</h1>
+
+    <?php if ($mensaje_exito): ?>
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <?= $mensaje_exito ?>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    <?php endif; ?>
+
+    <?php if ($mensaje_error): ?>
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <?= $mensaje_error ?>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    <?php endif; ?>
 
     <div class="card shadow-sm mb-5">
         <div class="card-header">
@@ -411,15 +475,14 @@ $button_class = $id_editar ? 'btn-primary' : 'btn-success';
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/es.js"></script> <script>
-    // Initialize Flatpickr for the date input
     document.addEventListener('DOMContentLoaded', function() {
         flatpickr("#fecha_nac", {
-            dateFormat: "Y-m-d", // Format matching your database requirement
-            locale: "es",      // Use Spanish locale
-            altInput: true,    // Show a human-friendly date in the input
-            altFormat: "d F, Y", // e.g., "03 Julio, 2025"
-            enableTime: false, // No time selection
-            maxDate: "today"   // Prevent selecting future dates
+            dateFormat: "Y-m-d", // Formato que coincide con el requisito de tu base de datos
+            locale: "es",      // Usar localización en español
+            altInput: true,    // Mostrar una fecha amigable en el input
+            altFormat: "d F, Y", // Ej: "03 Julio, 2025"
+            enableTime: false, // Sin selección de hora
+            maxDate: "today"   // No permitir fechas futuras
         });
     });
 </script>
